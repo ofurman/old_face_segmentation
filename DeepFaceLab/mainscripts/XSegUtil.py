@@ -96,7 +96,7 @@ def apply_xseg(input_path, model_path):
             mask = cv2.warpAffine( mask, mat, (w,w), np.zeros( (h,w,c), dtype=np.float), cv2.WARP_INVERSE_MAP | cv2.INTER_LANCZOS4)
             mask = cv2.resize(mask, (xseg_res, xseg_res), interpolation=cv2.INTER_LANCZOS4)
         mask[mask < 0.5]=0
-        mask[mask >= 0.5]=1    
+        mask[mask >= 0.5]=1
         dflimg.set_xseg_mask(mask)
         dflimg.save()
 
@@ -122,9 +122,12 @@ def fetch_xseg(input_path):
             continue
         
         ie_polys = dflimg.get_seg_ie_polys()
+        mask = dflimg.get_xseg_mask()
 
         if ie_polys.has_polys():
             files_copied.append(filepath)
+            with open(str(output_path / filepath.name) + "_mask.npy", "wb") as f:
+                np.save(f, mask)
             shutil.copy ( str(filepath), str(output_path / filepath.name) )
     
     io.log_info(f'Files copied: {len(files_copied)}')

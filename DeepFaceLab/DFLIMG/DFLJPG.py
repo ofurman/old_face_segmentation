@@ -277,6 +277,20 @@ class DFLJPG(object):
                 seg_ie_polys = None
 
         self.dfl_dict['seg_ie_polys'] = seg_ie_polys
+    
+    def get_mask_from_ie_polys(self):
+        polys = self.get_seg_ie_polys().get_polys()
+        polys = np.array([ poly.pts for poly in polys])
+        polys = np.squeeze(polys)
+        polys = polys.astype('int32')
+        image_shape = self.get_shape()
+
+        mask = np.zeros(image_shape, dtype=np.uint8)
+        channel_count = image_shape[2]
+        ignore_mask_color = (255,)*channel_count
+        cv2.fillConvexPoly(mask, polys, ignore_mask_color)
+
+        return mask
 
     def has_xseg_mask(self):
         return self.dfl_dict.get('xseg_mask',None) is not None

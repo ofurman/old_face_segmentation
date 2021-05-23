@@ -1292,6 +1292,14 @@ class MainWindow(QXMainWindow):
                 dflimg.set_seg_ie_polys( new_ie_polys )
                 dflimg.save()
 
+                mask = dflimg.get_mask_from_ie_polys()
+                try:
+                    with open(str(dflimg.filename) + "_mask_true.npy", "wb") as f:
+                        np.save(f, mask)
+                except:
+                    raise Exception( f'cannot save mask for {dflimg.filename}' )
+                
+
         self.filename_label.setText(f"")
 
     def process_prev_image(self):
